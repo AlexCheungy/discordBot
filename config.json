@@ -3,5 +3,7 @@
   "prefix": ">",
   "username": "CowBoyBebot",
   "password": "BebotPassword",
-  "help": "```List of current commands: \n\t>automock [username/all] \n\t Turns on Auto Mock on All the messages typed from this moment \n\n\t>mock [username] ; [text] \n\t Mock a certain quote from a username \n\n\t>listmemes \n\t Send a DM containing all supported meme pictures \n\n\t>[Meme Template]; [toptext] ; [bottomtext] \n\t Generate A Meme With Text On Top and Bottom \n\n\t>[Meme Template] ; [bottomtext] \n\tGenerate A Meme With Text On The Bottom Only \n\n\t [Meme Template] ; [toptext] ; \n\tGenerate A Meme With Text On The Bottom Only \n\n\t [Meme Template] ; \n\tGenerate A Meme with no text```"
+  "help": "```List of current commands: \n\n\t>mock [username] ; [text] \n\t Mock a certain quote from a username \n\n\t>listmemes \n\t Send a DM containing all supported meme pictures \n\n\t>[Meme Template]; [toptext] ; [bottomtext] \n\t Generate A Meme With Text On Top and Bottom \n\n\t>[Meme Template] ; [bottomtext] \n\tGenerate A Meme With Text On The Bottom Only \n\n\t [Meme Template] ; [toptext] ; \n\tGenerate A Meme With Text On The Bottom Only \n\n\t [Meme Template] ; \n\tGenerate A Meme with no text```",
+  "imgFlipCaption": "https://api.imgflip.com/caption_image",
+  "imgFlipGet": "https://api.imgflip.com/get_memes"
 }
