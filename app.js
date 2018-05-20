@@ -9,6 +9,9 @@ const client = new Discord.Client();
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
+var request = require('request');
+
+
 // This Event Plays When:
   // -Bot is turned on
   // -Bot reconnected  after disconnecting
@@ -26,16 +29,35 @@ client.on('message', async msg => {
 
   var currMsg = msg.content.substring(1).toLowerCase();
 
+  //Unmock Command is handled elsewhere
+  if (currMsg === "unmock") return;
+
   //Returns A List of Commands
   if (currMsg === "help") {
     msg.reply(config.help);
-    console.log(config.help)
   }
 
+  //Ping the Bot for Testing Purposes
   if (currMsg === 'ping') {
     msg.reply('pong');
   }
+
+  //Send the User of Current Supported Meme Images
+  if (currMsg === "listmemes") {
+    msg.author.send("blah blah");
+  }
+
 });
 
 // Log On To Discord Bot using this App Token
 client.login(config.token);
+
+function function1() {
+    // stuff you want to happen right away
+    console.log('Welcome to My Console,');
+}
+
+function function2() {
+    // all the stuff you want to happen after that pause
+    console.log('Blah blah blah blah extra-blah');
+}
