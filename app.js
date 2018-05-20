@@ -4,19 +4,26 @@ const Discord = require('discord.js');
 //Discord Bot Client
 const client = new Discord.Client();
 
+//Package for GET and POST Requests
+const request = require('request');
+
 //Config File Containing:
   // -Discord Bot Unique token
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
-var request = require('request');
 
 // Callback Function Gets The List Of imgflip Memes
   // GET Request
 var memeList = function(callback) {
   request(config.imgFlipGet, {json:true}, (error, response, body) => {
     if (!error && response.statusCode == 200) {
-      callback(null, body);
+      var list2, list3, list;
+      body.data.memes.forEach(function (item) {
+        list = list + "Meme: " + item.name + " ID: " + item.id + "\n";
+      });
+      console.log(body.data.memes.length);
+      callback(null, list);
     }
     else {
       callback(error);
@@ -29,7 +36,6 @@ var memeList = function(callback) {
   // -Bot reconnected  after disconnecting
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
-  console.log(fun);
 });
 
 // This Event Plays When:
@@ -42,16 +48,19 @@ client.on('message', async msg => {
   //Ignore messages without the prefix
   if (msg.content.startsWith(config.prefix) != 1) return;
 
+  //Clean the Case Sensitivity
   var currMsg = msg.content.substring(1).toLowerCase();
 
   //Returns A List of Commands
   if (currMsg === "help") {
     msg.reply(config.help);
+    return;
   }
 
   //Ping the Bot for Testing Purposes
   if (currMsg === 'ping') {
     msg.reply('pong');
+    return;
   }
 
   //Send the User of Current Supported Meme Images
@@ -62,14 +71,23 @@ client.on('message', async msg => {
         console.log(error);
       }
       else {
-        console.log(data.data.memes);
-        data.data.memes.forEach(function (item) {
-          console.log(item.name);
-        });
+        console.log(data.length);
+        msg.author.send("These are the List of Memes, You Can Use Either The Name or ID\n");
+        msg.author.send("```");
       }
     });
     msg.author.send("blah blah");
+    return;
   }
+
+  // Commands With Arguments To Parse
+
+  console.log("Pass This Point");
+  if (currMsg === "pass") console.log("Woah");
+
+  if (currMsg === "mock") return;
+
+  if (currMsg === "make") return;
 
 });
 
