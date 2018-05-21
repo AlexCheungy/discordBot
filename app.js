@@ -16,17 +16,10 @@ const config = require("./config.json");
   // GET Request
 var memeList = function(callback) {
   request(config.imgFlipGet, {json:true}, (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      var list2, list3, list;
-      body.data.memes.forEach(function (item) {
-        list = list + "Meme: " + item.name + " ID: " + item.id + "\n";
-      });
-      console.log(body.data.memes.length);
-      callback(null, list);
-    }
-    else {
+    if (!error && response.statusCode == 200)
+      callback(null, body.data.memes);
+    else
       callback(error);
-    }
   });
 };
 
@@ -36,11 +29,10 @@ var generateMeme = function(InputOptions, callback) {
   request.post({url: config.imgFlipCaption, form: InputOptions}, (error, response, body) => {
     if (!error && response.statusCode == 200) {
       var JSONParse = JSON.parse(body);
-      callback(null, JSONParse.data.page_url);
+      callback(null, JSONParse);
     }
-    else {
+    else
       callback(error);
-    }
   });
 };
 
@@ -63,6 +55,9 @@ client.on('message', async msg => {
 
   //Clean the Case Sensitivity
   var currMsg = msg.content.substring(1).toLowerCase();
+
+  //Ignore If No Command After Prefix
+  if (currMsg.length == 0) return;
 
   //Returns A List of Commands
   if (currMsg === "help") {
@@ -89,29 +84,32 @@ client.on('message', async msg => {
         msg.author.send("```");
       }
     });
+    return;
   }
 
+//*******************************************************************
   // Commands With Arguments To Parse
+  var args = currMsg.substr(currMsg.indexOf(" ") + 1);
+  currMsg = currMsg.slice(0, currMsg.indexOf(" "));
 
-  console.log("Pass This Point");
-  if (currMsg === "pass") console.log("Woah");
+  // POST Request Template
+  var InputOptions = config.Inputs;
 
-  //Special Meme That Is Case Sensitive
-    //This Requires Regex and Special POST Request Options
+  //Favorite Meme Gets Its Own Command
   if (currMsg === "mock") {
-    var InputOptions = config.Inputs;
     InputOptions.template_id = config.mockID;
-    InputOptions.text0 = "";
-    InputOptions.text1 = "i mAdE A DiSCorD Bot";
     generateMeme(InputOptions, function(error, data) {
-      if (error) return;
-      else msg.reply(data);
+      if (error || data.success === false) return;
+      else msg.reply(data.data.page_url);
   });
+  return;
 }
 
   //Generates Memes Off The Paramters Given
-  if (currMsg === "make") return;
+  if (currMsg === "make") {
 
+    return;
+  }
 });
 
 // Log On To Discord Bot using this App Token
