@@ -12,7 +12,6 @@ const request = require('request');
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
-
 // Callback Function Gets The List Of imgflip Memes
   // GET Request
 var memeList = function(callback) {
@@ -31,11 +30,25 @@ var memeList = function(callback) {
   });
 };
 
+//Callback Function That Generates Memes on imgflip
+  // POST Request
+var generateMeme = function(InputOptions, callback) {
+  request.post({url: config.imgFlipCaption, form: InputOptions}, (error, response, body) => {
+    if (!error && response.statusCode == 200) {
+      var JSONParse = JSON.parse(body);
+      callback(null, JSONParse.data.page_url);
+    }
+    else {
+      callback(error);
+    }
+  });
+};
+
 // This Event Plays When:
   // -Bot is turned on
   // -Bot reconnected  after disconnecting
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`)
+  console.log(`Logged in as ${client.user.tag}!`);
 });
 
 // This Event Plays When:
@@ -76,8 +89,6 @@ client.on('message', async msg => {
         msg.author.send("```");
       }
     });
-    msg.author.send("blah blah");
-    return;
   }
 
   // Commands With Arguments To Parse
@@ -85,8 +96,20 @@ client.on('message', async msg => {
   console.log("Pass This Point");
   if (currMsg === "pass") console.log("Woah");
 
-  if (currMsg === "mock") return;
+  //Special Meme That Is Case Sensitive
+    //This Requires Regex and Special POST Request Options
+  if (currMsg === "mock") {
+    var InputOptions = config.Inputs;
+    InputOptions.template_id = config.mockID;
+    InputOptions.text0 = "";
+    InputOptions.text1 = "i mAdE A DiSCorD Bot";
+    generateMeme(InputOptions, function(error, data) {
+      if (error) return;
+      else msg.reply(data);
+  });
+}
 
+  //Generates Memes Off The Paramters Given
   if (currMsg === "make") return;
 
 });
