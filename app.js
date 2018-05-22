@@ -12,6 +12,12 @@ const request = require('request');
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
+var JSONMemes;
+var InputOptions = config.Inputs;
+
+// Async/Await Function Gets The List of imgflip Memes
+
+
 // Callback Function Gets The List Of imgflip Memes
   // GET Request
 var memeList = function(callback) {
@@ -89,14 +95,31 @@ client.on('message', async msg => {
 
 //*******************************************************************
   // Commands With Arguments To Parse
+  if (currMsg.indexOf(" ") == -1) {
+    return;
+  }
   var args = currMsg.substr(currMsg.indexOf(" ") + 1);
   currMsg = currMsg.slice(0, currMsg.indexOf(" "));
+  args = args.split(";");
+  for(var i = 0; i < args.length; i++)
+    args[i] = args[i].trim();
 
-  // POST Request Template
-  var InputOptions = config.Inputs;
+  // POST Request Reset Text Variables
+  InputOptions.text0 = InputOptions.text1 = "";
 
   //Favorite Meme Gets Its Own Command
   if (currMsg === "mock") {
+    if (args.length > 2) {
+      msg.reply("Invalid Paramters Given");
+      return;
+    }
+    else if (args.length == 1)
+      InputOptions.text1 = args[0];
+    else {
+      InputOptions.text0 = args[0];
+      InputOptions.text1 = args[1];
+    }
+    
     InputOptions.template_id = config.mockID;
     generateMeme(InputOptions, function(error, data) {
       if (error || data.success === false) return;
