@@ -4,8 +4,12 @@ const Discord = require('discord.js');
 //Discord Bot Client
 const client = new Discord.Client();
 
-//Package for GET and POST Requests
+//Packages for GET and POST Requests
 const request = require('request');
+const axios = require('axios');
+
+//File Write Package
+const fs = require('fs');
 
 //Config File Containing:
   // -Discord Bot Unique token
@@ -16,18 +20,23 @@ var JSONMemes;
 var InputOptions = config.Inputs;
 
 // Async/Await Function Gets The List of imgflip Memes
+async function getMeme() {
+  try {
+    const response = await axios.get(config.imgFlipGet);
+    JSONMemes = response.data.data.memes;
+    var list = "";
 
-
-// Callback Function Gets The List Of imgflip Memes
-  // GET Request
-var memeList = function(callback) {
-  request(config.imgFlipGet, {json:true}, (error, response, body) => {
-    if (!error && response.statusCode == 200)
-      callback(null, body.data.memes);
-    else
-      callback(error);
-  });
-};
+    JSONMemes.forEach(function(item) {
+      list = list + item.name + " ID: " + item.id + "\n";
+    });
+    fs.writeFile('MemeList.txt', list ,(error) => {
+      if(error) return console.log(error);
+    });
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
 
 //Callback Function That Generates Memes on imgflip
   // POST Request
@@ -46,6 +55,7 @@ var generateMeme = function(InputOptions, callback) {
   // -Bot is turned on
   // -Bot reconnected  after disconnecting
 client.on('ready', () => {
+  getMeme();
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -79,16 +89,8 @@ client.on('message', async msg => {
 
   //Send the User of Current Supported Meme Images
   if (currMsg === "listmemes") {
-    memeList(function(error, data) {
-      if (error) {
-        msg.reply('Sorry I Had An Error Getting The List ');
-        console.log(error);
-      }
-      else {
-        console.log(data.length);
-        msg.author.send("These are the List of Memes, You Can Use Either The Name or ID\n");
-        msg.author.send("```");
-      }
+    msg.author.send("Here Are The List Of Supported Memes and Their IDs", {
+      file: './MemeList.txt'
     });
     return;
   }
@@ -119,7 +121,7 @@ client.on('message', async msg => {
       InputOptions.text0 = args[0];
       InputOptions.text1 = args[1];
     }
-    
+
     InputOptions.template_id = config.mockID;
     generateMeme(InputOptions, function(error, data) {
       if (error || data.success === false) return;
