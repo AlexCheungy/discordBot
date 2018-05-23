@@ -24,11 +24,12 @@ async function getMeme() {
   try {
     const response = await axios.get(config.imgFlipGet);
     JSONMemes = response.data.data.memes;
-    var list = "";
 
+    var list = "";
     JSONMemes.forEach(function(item) {
       list = list + item.name + " ID: " + item.id + "\n";
     });
+
     fs.writeFile('MemeList.txt', list ,(error) => {
       if(error) return console.log(error);
     });
@@ -100,42 +101,65 @@ client.on('message', async msg => {
   if (currMsg.indexOf(" ") == -1) {
     return;
   }
+
+  // Create Argument Array
   var args = currMsg.substr(currMsg.indexOf(" ") + 1);
   currMsg = currMsg.slice(0, currMsg.indexOf(" "));
   args = args.split(";");
   for(var i = 0; i < args.length; i++)
     args[i] = args[i].trim();
 
-  // POST Request Reset Text Variables
-  InputOptions.text0 = InputOptions.text1 = "";
-
   //Favorite Meme Gets Its Own Command
   if (currMsg === "mock") {
-    if (args.length > 2) {
-      msg.reply("Invalid Paramters Given");
-      return;
-    }
-    else if (args.length == 1)
-      InputOptions.text1 = args[0];
-    else {
-      InputOptions.text0 = args[0];
-      InputOptions.text1 = args[1];
-    }
-
+    setText(args);
     InputOptions.template_id = config.mockID;
     generateMeme(InputOptions, function(error, data) {
-      if (error || data.success === false) return;
-      else msg.reply(data.data.page_url);
-  });
+      if (!error && data.success === true)
+        msg.reply(data.data.page_url);
+      else if (data.success === false)
+        msg.reply(data.error_message);
+      else {
+        console.log(error);
+      }
+    });
   return;
 }
 
   //Generates Memes Off The Paramters Given
   if (currMsg === "make") {
-
+    InputOptions.template_id = await matchID(args.shift());
+    setText(args);
+    generateMeme(InputOptions, function(error, data) {
+      if (!error && data.success === true)
+        msg.reply(data.data.page_url);
+      else if (data.success === false)
+        msg.reply(data.error_message);
+      else {
+        console.log(error);
+      }
+    });
     return;
   }
 });
 
 // Log On To Discord Bot using this App Token
 client.login(config.token);
+
+function setText(args){
+  InputOptions.text0 = InputOptions.text1 = "";
+  if (args.length > 2)
+    msg.reply("Invalid Paramters Given: Only Up To Two Text Blocks Allowed");
+  else if (args.length == 1)
+    InputOptions.text1 = args[0];
+  else {
+    InputOptions.text0 = args[0];
+    InputOptions.text1 = args[1];
+  }
+}
+
+async function matchID(input) {
+  if (/^\d+$/.test(input))
+    return input;
+
+
+}
