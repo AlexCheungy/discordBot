@@ -20,6 +20,7 @@ var JSONMemes;
 var InputOptions = config.Inputs;
 
 // Async/Await Function Gets The List of imgflip Memes
+  // GET Request
 async function getMeme() {
   try {
     const response = await axios.get(config.imgFlipGet);
@@ -70,8 +71,8 @@ client.on('message', async msg => {
   //Ignore messages without the prefix
   if (msg.content.startsWith(config.prefix) != 1) return;
 
-  //Clean the Case Sensitivity
-  var currMsg = msg.content.substring(1).toLowerCase();
+  //Clean Prefix
+  var currMsg = msg.content.substring(1);
 
   //Ignore If No Command After Prefix
   if (currMsg.length == 0) return;
@@ -123,9 +124,9 @@ client.on('message', async msg => {
       }
     });
   return;
-}
+  }
 
-  //Generates Memes Off The Paramters Given
+//Generates Memes Off The Paramters Given
   if (currMsg === "make") {
     InputOptions.template_id = await matchID(args.shift());
     setText(args);
@@ -145,6 +146,7 @@ client.on('message', async msg => {
 // Log On To Discord Bot using this App Token
 client.login(config.token);
 
+// Set Text Arguments For The Meme
 function setText(args){
   InputOptions.text0 = InputOptions.text1 = "";
   if (args.length > 2)
@@ -155,11 +157,14 @@ function setText(args){
     InputOptions.text0 = args[0];
     InputOptions.text1 = args[1];
   }
+  console.log(InputOptions.text0 + " " + InputOptions.text1);
 }
 
+// Checks If The Name or ID Was Given And Sets Accordingly
 async function matchID(input) {
   if (/^\d+$/.test(input))
     return input;
-
-
+  var templateFound = JSONMemes.find(item => item.name === input);
+  if (templateFound != undefined) return templateFound.id;
+  else return input;
 }
