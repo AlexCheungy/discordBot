@@ -58,6 +58,7 @@ var generateMeme = function(InputOptions, callback) {
   // -Bot reconnected  after disconnecting
 client.on('ready', () => {
   getMeme();
+  client.user.setActivity('Type >help for help');
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -98,18 +99,21 @@ client.on('message', async msg => {
   }
 
 //*******************************************************************
-  // Commands With Arguments To Parse
-  if (currMsg.indexOf(";") == -1) {
-    var memeSearch = await matchID(currMsg);
+  // Check For Args
+  if (currMsg.indexOf(" ") == -1) return;
+
+  var args = await getArgs(currMsg);
+  currMsg = await cleanCommand(currMsg);
+
+  //Search For Meme Template
+  if (currMsg === "search") {
+    var memeSearch = await matchID(args[0]);
     if (memeSearch != undefined)
       msg.reply(memeSearch.url);
     else
       msg.reply("This Is Not A Valid Meme");
-    return;
+      return;
   }
-
-  var args = await getArgs(currMsg);
-  currMsg = await cleanCommand(currMsg);
 
   //Favorite Meme Gets Its Own Command
   if (currMsg === "mock") {
@@ -124,10 +128,10 @@ client.on('message', async msg => {
         console.log(error);
       }
     });
-  return;
+    return;
   }
 
-//Generates Memes Off The Paramters Given
+  //Generates Memes Off The Paramters Given
   if (currMsg === "make") {
     var memeSearch = await matchID(args.shift());
     if (memeSearch === undefined) {
@@ -149,6 +153,8 @@ client.on('message', async msg => {
     return;
   }
 
+
+
 });
 
 // Log On To Discord Bot using this App Token
@@ -156,9 +162,8 @@ client.login(config.token);
 
 // Function Gets The Arguments From The Command
 async function getArgs(currMsg) {
-  var args = currMsg.slice(currMsg.indexOf(";"), currMsg.length);
+  var args = currMsg.slice(currMsg.indexOf(" "), currMsg.length);
   args = args.split(";");
-  args.shift();
   for(var i = 0; i < args.length; i++)
     args[i] = args[i].trim();
   return args;
@@ -172,26 +177,35 @@ async function cleanCommand(currMsg) {
   return currMsg;
 }
 
-
 // Set Text Arguments For The Meme
 function setText(args){
-  InputOptions.text0 = InputOptions.text1 = "";
-  if (args.length > 2)
-    msg.reply("Invalid Paramters Given: Only Up To Two Text Blocks Allowed");
-  else if (args.length == 1)
-    InputOptions.text1 = args[0];
-  else {
-    InputOptions.text0 = args[0];
-    InputOptions.text1 = args[1];
+  try {
+    InputOptions.text0 = InputOptions.text1 = "";
+    if (args.length > 2)
+      msg.reply("Invalid Paramters Given: Only Up To Two Text Blocks Allowed");
+    else if (args.length == 1)
+      InputOptions.text1 = args[0];
+    else {
+      InputOptions.text0 = args[0];
+      InputOptions.text1 = args[1];
+    }
+  }
+  catch (error) {
+    console.log(error);
   }
 }
 
 // Checks If The Name or ID Was Given And Sets Accordingly
 async function matchID(input) {
-  if (/^\d+$/.test(input))
-    return input;
-  var templateFound = JSONMemes.find(item => item.name === input);
-  console.log(templateFound);
-  if (templateFound != undefined) return templateFound;
-  else return undefined;
+  try {
+    if (/^\d+$/.test(input))
+      return input;
+    var templateFound = JSONMemes.find(item => item.name === input);
+    if (templateFound != undefined) return templateFound;
+    else return undefined;
+  }
+  catch(error) {
+    console.log(error);
+  }
+
 }
