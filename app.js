@@ -162,7 +162,7 @@ client.on('message', async msg => {
     }
 
     var userInfo = await client.users.find("username", args[0]);
-    if (userInfo != null && userInfo.lastMessage != null) {
+    if (userInfo != null && userInfo.bot == false  && userInfo.lastMessage != null) {
       args[0] = userInfo.username;
       args[1] = userInfo.lastMessage.content;
       setText(args);
