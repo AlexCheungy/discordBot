@@ -153,7 +153,32 @@ client.on('message', async msg => {
     return;
   }
 
+  if (currMsg === "mocklast") {
+    if (args.length != 1)
+      return;
+    if (args[0] === msg.author.username) {
+      msg.reply("Why Would You Mock Yourself Lol?");
+      return;
+    }
 
+    var userInfo = await client.users.find("username", args[0]);
+    if (userInfo != null && userInfo.lastMessage != null) {
+      args[0] = userInfo.username;
+      args[1] = userInfo.lastMessage.content;
+      setText(args);
+      InputOptions.template_id = config.mockID;
+      generateMeme(InputOptions, function(error, data) {
+        if (!error && data.success === true)
+          msg.reply(data.data.page_url);
+        else if (data.success === false)
+          msg.reply(data.error_message);
+        else {
+          console.log(error);
+        }
+      });
+    }
+    return;
+  }
 
 });
 
