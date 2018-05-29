@@ -4,6 +4,7 @@
   "help": "```List of current commands: \n\n\t>mock [text0] ; [text1] \n\t Mock a certain quote from a username \n\n\t>listmemes \n\t Send a DM containing all supported meme pictures \n\n\t>make [Meme Template]; [toptext] ; [bottomtext] \n\t Generate A Meme With Text On Top and Bottom \n\n\t>make [Meme Template] ; [bottomtext] \n\tGenerate A Meme With Text On The Bottom Only \n\n\t>make [Meme Template] ; [toptext] ; \n\tGenerate A Meme With Text On The Top Only \n\n\t>search [Meme Template] \n\tSHow Meme Picture```",
   "imgFlipCaption": "https://api.imgflip.com/caption_image",
   "imgFlipGet": "https://api.imgflip.com/get_memes",
+  "IMFDBGet": "http://www.imfdb.org/api.php",
   "mockID": "102156234",
   "Inputs": {
     "template_id": "",

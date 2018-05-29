@@ -16,6 +16,8 @@ const fs = require('fs');
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
+const Wiki = require("./IMFDB.js");
+
 var JSONMemes;
 var InputOptions = config.Inputs;
 
@@ -188,6 +190,7 @@ client.on('message', async msg => {
     const ResultReply = await msg.channel.awaitMessages(reply => {
         console.log(reply.content);
       }, {max: 2, time: 100000});
+
 
     return;
   }
