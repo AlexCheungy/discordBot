@@ -153,9 +153,9 @@ client.on('message', async msg => {
     return;
   }
 
+  //Mock Command For The Last Message A User Posted
   if (currMsg === "mocklast") {
-    if (args.length != 1)
-      return;
+    if (args.length != 1) return;
     if (args[0] === msg.author.username) {
       msg.reply("Why Would You Mock Yourself Lol?");
       return;
@@ -177,6 +177,18 @@ client.on('message', async msg => {
         }
       });
     }
+    return;
+  }
+
+  //Searches IMFDB For Wiki Pages
+  if (currMsg === "imfdb") {
+    if (args.length != 1) return;
+    msg.reply("Here Are IMFDB Search Results:\n");
+
+    const ResultReply = await msg.channel.awaitMessages(reply => {
+        console.log(reply.content);
+      }, {max: 2, time: 100000});
+
     return;
   }
 
