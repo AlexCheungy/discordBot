@@ -16,6 +16,7 @@ const fs = require('fs');
   // -Discord Bot Command Prefix
 const config = require("./config.json");
 
+const Key = require("./configPass.json");
 const Wiki = require("./IMFDB.js");
 
 var JSONMemes;
@@ -198,7 +199,7 @@ client.on('message', async msg => {
 });
 
 // Log On To Discord Bot using this App Token
-client.login(config.token);
+client.login(Key.token);
 
 // Function Gets The Arguments From The Command
 async function getArgs(currMsg) {
